@@ -2,10 +2,14 @@
   "name": "task-manager",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/server.js"
+,
   "scripts": {
-    "start":"node backend/server.js",
-    "backend": "nodemon backend/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
+    "backend": "nodemon backend/server.js",
+    "frontend": "npm start --prefix frontend",
+    "both": "concurrently \"npm run frontend\" \"npm run backend\" "
   },
   "repository": {
     "type": "git",
@@ -23,5 +27,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^8.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
