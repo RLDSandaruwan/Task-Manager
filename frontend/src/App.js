@@ -8,8 +8,8 @@ export const URL = process.env.REACT_APP_SERVER_URL;
 function App() {
   return (
     <>
-      <div className="app">
-        <div className="task-container">
+      <div className="min-h-screen bg-blue-100 flex items-center justify-center px-2">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-6 overflow-y-auto max-h-[90vh]">
           <TaskList />
         </div>
       </div>
@@ -19,4 +19,3 @@ function App() {
 }
 
 export default App;
-
