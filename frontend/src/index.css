@@ -8,11 +8,20 @@ body {
   @apply font-poppins bg-blue-50 text-gray-800;
 }
 
-/* Optional custom scrollbar for tasks */
+/* Task container scroll */
 .task-container::-webkit-scrollbar {
   width: 6px;
 }
 .task-container::-webkit-scrollbar-thumb {
   background-color: #9d0191;
   border-radius: 4px;
+}
+
+/* Slight hover lift for task items */
+.task-card {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(157, 1, 145, 0.1);
 }

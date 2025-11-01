@@ -41,7 +41,7 @@ function App() {
 
       {/* Main Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 overflow-y-auto max-h-[80vh]">
+        <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl p-8">
           {renderPage()}
         </div>
         <ToastContainer position="top-right" autoClose={3000} />

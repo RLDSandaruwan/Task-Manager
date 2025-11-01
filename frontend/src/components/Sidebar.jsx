@@ -21,17 +21,15 @@ function Sidebar({ setActivePage }) {
     { id: "completed", label: "Completed", icon: <FaCheckCircle /> },
     { id: "profile", label: "Profile", icon: <FaUser /> },
   ];
-
   return (
     <aside
-      className={`${
-        isCollapsed ? "w-20" : "w-60"
-      } h-screen bg-white bg-opacity-90 shadow-lg flex flex-col justify-between transition-all duration-300`}
+      className={`${isCollapsed ? "w-20" : "w-60"
+        } min-h-screen bg-white bg-opacity-90 shadow-lg flex flex-col justify-between transition-all duration-300`}
     >
       {/* Top Section */}
       <div>
         {/* Header with toggle */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 sticky top-0 bg-white bg-opacity-90 z-10">
           {!isCollapsed && (
             <h2 className="text-xl font-semibold text-purpleMain tracking-wide">
               Task Manager
@@ -61,7 +59,7 @@ function Sidebar({ setActivePage }) {
       </div>
 
       {/* Bottom Section */}
-      <div className="px-3 py-4 border-t border-gray-200">
+      <div className="px-3 py-4 border-t border-gray-200 mt-auto">
         <button className="flex items-center gap-3 text-red-500 hover:bg-red-100 px-3 py-2 rounded-lg transition-all w-full">
           <FaSignOutAlt />
           {!isCollapsed && <span>Logout</span>}
@@ -69,6 +67,7 @@ function Sidebar({ setActivePage }) {
       </div>
     </aside>
   );
+
 }
 
 export default Sidebar;
