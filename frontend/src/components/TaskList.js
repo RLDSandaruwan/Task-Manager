@@ -9,26 +9,29 @@ import loadingimg from "../assets/loader.gif";
 const TaskList = () => {
   const [formData, setformData] = useState({
     name: "",
+    dueDate: "",
     completed: false,
   });
+
   const [Tasks, setTasks] = useState([]);
   const [CompletedTask, setcompletedTask] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const [isEditing, setisEditing] = useState(false);
   const [TaskID, setTaskID] = useState("");
 
-  const { name } = formData;
+  const { name, dueDate } = formData;
 
+  // handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
 
+  // fetch tasks
   const getTasks = async () => {
     setisLoading(true);
     try {
       const { data } = await axios.get(`${URL}/api/tasks`);
-      // simulate loading delay (2 seconds)
       setTimeout(() => {
         setTasks(data);
         setisLoading(false);
@@ -43,16 +46,25 @@ const TaskList = () => {
     getTasks();
   }, []);
 
+  // create task
   const createTask = async (e) => {
     e.preventDefault();
     if (name.trim() === "") {
       return toast.error("Input field cannot be empty");
     }
+
+    // Auto-set today's date if no due date
+    const today = new Date().toISOString().split("T")[0];
+    const dataToSend = {
+      ...formData,
+      dueDate: formData.dueDate || today,
+    };
+
     try {
-      const res = await axios.post(`${URL}/api/tasks`, formData);
+      const res = await axios.post(`${URL}/api/tasks`, dataToSend);
       if (res.status === 201) {
-        toast.success("✅ Task added successfully!");
-        setformData({ ...formData, name: "" });
+        toast.success("Task added successfully!");
+        setformData({ name: "", dueDate: "", completed: false });
         getTasks();
       }
     } catch (err) {
@@ -60,27 +72,36 @@ const TaskList = () => {
     }
   };
 
+
+  // delete task
   const deleteTask = async (id) => {
     try {
       await axios.delete(`${URL}/api/tasks/${id}`);
-      toast.success("🗑️ Task deleted successfully");
+      toast.success("Task deleted successfully");
       getTasks();
     } catch (err) {
       toast.error(err.message);
     }
   };
 
+  // count completed tasks
   useEffect(() => {
     const cTask = Tasks.filter((task) => task.completed === true);
     setcompletedTask(cTask);
   }, [Tasks]);
 
-  const getSingleTask = async (task) => {
-    setformData({ name: task.name, completed: false });
+  // get single task for editing
+  const getSingleTask = (task) => {
+    setformData({
+      name: task.name,
+      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "", // format date
+      completed: task.completed,
+    });
     setTaskID(task._id);
     setisEditing(true);
   };
 
+  // update task
   const updateTask = async (e) => {
     e.preventDefault();
     if (name.trim() === "") {
@@ -88,23 +109,25 @@ const TaskList = () => {
     }
     try {
       await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ ...formData, name: "" });
+      setformData({ name: "", dueDate: "", completed: false });
       setisEditing(false);
-      toast.success("✏️ Task updated successfully");
+      toast.success("Task updated successfully");
       getTasks();
     } catch (err) {
       toast.error(err.message);
     }
   };
 
+  // mark as complete
   const setToComplete = async (task) => {
     const newFormData = {
       name: task.name,
+      dueDate: task.dueDate,
       completed: true,
     };
     try {
       await axios.put(`${URL}/api/tasks/${task._id}`, newFormData);
-      toast.success("✅ Task marked as completed");
+      toast.success("Task marked as completed");
       getTasks();
     } catch (err) {
       toast.error(err.message);
@@ -112,13 +135,14 @@ const TaskList = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
       <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
-        Task Manager
+        All Tasks
       </h2>
 
       <TaskForm
         name={name}
+        dueDate={dueDate}
         handleInputChange={handleInputChange}
         createTask={createTask}
         isEditing={isEditing}
@@ -150,7 +174,7 @@ const TaskList = () => {
         </p>
       ) : (
         <div className="space-y-3">
-          {Tasks.map((task, index) => (
+          {Tasks.slice().reverse().map((task, index) => (
             <Task
               key={task._id || index}
               task={task}
@@ -164,6 +188,7 @@ const TaskList = () => {
       )}
     </div>
   );
+
 };
 
 export default TaskList;
