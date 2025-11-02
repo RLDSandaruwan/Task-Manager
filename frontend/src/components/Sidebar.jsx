@@ -41,7 +41,7 @@ function Sidebar({ setActivePage }) {
     },
     { id: "all", label: "All Tasks", icon: <FaListUl /> },
     { id: "upcoming", label: "Upcoming", icon: <FaHourglassHalf /> },
-     { id: "calendar", label: "Calandar", icon: <FaCalendarAlt /> },
+    { id: "calendar", label: "Calandar", icon: <FaCalendarAlt /> },
     { id: "completed", label: "Completed", icon: <FaCheckCircle /> },
     { id: "profile", label: "Profile", icon: <FaUser /> },
   ];
@@ -63,10 +63,11 @@ function Sidebar({ setActivePage }) {
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex items-center justify-center text-purpleMain hover:text-orangeMain transition-colors w-10 h-10 rounded-lg hover:bg-purple-50"
+            className="flex items-center justify-center text-purpleMain hover:text-orangeMain transition-colors w-10 h-10 rounded-lg hover:bg-purple-50 cursor-ew-resize select-none"
           >
             <VscLayoutSidebarRightOff size={22} />
           </button>
+
         </div>
 
 
