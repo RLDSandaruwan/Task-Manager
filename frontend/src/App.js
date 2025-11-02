@@ -35,15 +35,16 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-purpleMain to-lightBlue text-darkBlue">
+    <div className="min-h-screen flex bg-gradient-to-br from-indigo-100 via-sky-50 to-white text-darkBlue">
+
+      {/* min-h-screen flex bg-gradient-to-br from-purple-100 via-blue-50 to-white */}
+
       {/* Sidebar */}
       <Sidebar setActivePage={setActivePage} />
 
       {/* Main Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-5xl bg-white shadow-lg rounded-2xl p-8">
           {renderPage()}
-        </div>
         <ToastContainer position="top-right" autoClose={3000} />
       </main>
     </div>
