@@ -11,6 +11,7 @@ const TaskList = () => {
     name: "",
     dueDate: "",
     completed: false,
+    labels: "", 
   });
 
   const [Tasks, setTasks] = useState([]);
@@ -19,7 +20,7 @@ const TaskList = () => {
   const [isEditing, setisEditing] = useState(false);
   const [TaskID, setTaskID] = useState("");
 
-  const { name, dueDate } = formData;
+  const { name, dueDate, labels } = formData;
 
   // handle form input change
   const handleInputChange = (e) => {
@@ -53,25 +54,27 @@ const TaskList = () => {
       return toast.error("Input field cannot be empty");
     }
 
-    // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
+    const labelArray =
+      labels.trim() !== "" ? labels.split(",").map((l) => l.trim()) : [];
+
     const dataToSend = {
       ...formData,
-      dueDate: formData.dueDate || today,
+      dueDate: dueDate || today,
+      labels: labelArray, 
     };
 
     try {
       const res = await axios.post(`${URL}/api/tasks`, dataToSend);
       if (res.status === 201) {
         toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false });
+        setformData({ name: "", dueDate: "", completed: false, labels: "" });
         getTasks();
       }
     } catch (err) {
       toast.error(err.message);
     }
   };
-
 
   // delete task
   const deleteTask = async (id) => {
@@ -94,8 +97,9 @@ const TaskList = () => {
   const getSingleTask = (task) => {
     setformData({
       name: task.name,
-      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "", // format date
+      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
       completed: task.completed,
+      labels: task.labels ? task.labels.join(", ") : "", 
     });
     setTaskID(task._id);
     setisEditing(true);
@@ -107,9 +111,18 @@ const TaskList = () => {
     if (name.trim() === "") {
       return toast.error("Input field cannot be empty");
     }
+
+    const labelArray =
+      labels.trim() !== "" ? labels.split(",").map((l) => l.trim()) : [];
+
+    const updatedData = {
+      ...formData,
+      labels: labelArray,
+    };
+
     try {
-      await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false });
+      await axios.put(`${URL}/api/tasks/${TaskID}`, updatedData);
+      setformData({ name: "", dueDate: "", completed: false, labels: "" });
       setisEditing(false);
       toast.success("Task updated successfully");
       getTasks();
@@ -124,6 +137,7 @@ const TaskList = () => {
       name: task.name,
       dueDate: task.dueDate,
       completed: true,
+      labels: task.labels,
     };
     try {
       await axios.put(`${URL}/api/tasks/${task._id}`, newFormData);
@@ -143,6 +157,7 @@ const TaskList = () => {
       <TaskForm
         name={name}
         dueDate={dueDate}
+        labels={labels} 
         handleInputChange={handleInputChange}
         createTask={createTask}
         isEditing={isEditing}
@@ -188,7 +203,6 @@ const TaskList = () => {
       )}
     </div>
   );
-
 };
 
 export default TaskList;

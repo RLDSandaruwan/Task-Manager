@@ -9,6 +9,7 @@ import Upcoming from "./components/Upcoming";
 import Calendar from "./components/Calendar";
 import Completed from "./components/Completed";
 import Profile from "./components/Profile";
+import Labels from "./components/Labels";
 
 export const URL = process.env.REACT_APP_SERVER_URL;
 
@@ -29,6 +30,8 @@ function App() {
         return <Completed />;
       case "profile":
         return <Profile />;
+      case "labels":
+        return <Labels />;
       default:
         return <Today />;
     }

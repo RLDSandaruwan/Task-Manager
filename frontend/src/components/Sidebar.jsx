@@ -8,6 +8,7 @@ import {
   FaBars,
   FaClock,
   FaListUl,
+  FaHashtag,
 } from "react-icons/fa";
 
 import { FaHourglassHalf } from "react-icons/fa";
@@ -43,6 +44,7 @@ function Sidebar({ setActivePage }) {
     { id: "upcoming", label: "Upcoming", icon: <FaHourglassHalf /> },
     { id: "calendar", label: "Calandar", icon: <FaCalendarAlt /> },
     { id: "completed", label: "Completed", icon: <FaCheckCircle /> },
+    { id: "labels", label: "Labels", icon: <FaHashtag /> },
     { id: "profile", label: "Profile", icon: <FaUser /> },
   ];
 

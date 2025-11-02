@@ -168,7 +168,7 @@ const getUpcomingTasks = async () => {
       {Tasks.length > 0 && (
         <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">
           <p>
-            <b>Total Completed Tasks:</b> {Tasks.length}
+            <b>Total Upcoming Tasks:</b> {Tasks.length}
           </p>
           {/* <p>
             <b>Completed Tasks:</b> {CompletedTask.length}
@@ -186,7 +186,7 @@ const getUpcomingTasks = async () => {
 
       {!isLoading && Tasks.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">
-          No UpcomingTasks.
+          No Upcoming Tasks.
         </p>
       ) : (
         <div className="space-y-3">
