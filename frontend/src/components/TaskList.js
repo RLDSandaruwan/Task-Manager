@@ -62,6 +62,7 @@ const TaskList = () => {
     e.preventDefault();
     if (name.trim() === "") return toast.error("Task name is required");
 
+    // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
     const dataToSend = {
       ...formData,
@@ -121,7 +122,7 @@ const TaskList = () => {
     }
   };
 
-  // prepare form for edit
+  // get single task for editing
   const getSingleTask = (task) => {
     setformData({
       name: task.name,

@@ -3,7 +3,7 @@ import Select from "react-select";
 const TaskForm = ({
   createTask,
   name,
-  labels,
+  labels = [],
   allLabels = [],
   handleInputChange,
   isEditing,
@@ -24,9 +24,9 @@ const TaskForm = ({
   };
 
   // Pre-fill selected labels when editing
-  const selectedLabelOptions = labelOptions.filter((opt) =>
-    labels.includes(opt.value)
-  );
+const selectedLabelOptions = labelOptions.filter((opt) =>
+  (labels || []).includes(opt.value)
+);
 
   return (
     <form
