@@ -15,7 +15,7 @@ import NewTask from "./components/NewTask";
 export const URL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
-  const [activePage, setActivePage] = useState("today");
+  const [activePage, setActivePage] = useState("all");
 
   const renderPage = () => {
     switch (activePage) {
@@ -34,7 +34,7 @@ function App() {
       case "labels":
         return <Labels />;
       case "new":
-        return <NewTask />;
+        return <NewTask setActivePage={setActivePage} />;
       default:
         return <Today />;
     }
@@ -43,6 +43,7 @@ function App() {
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-indigo-100 via-sky-50 to-white text-darkBlue">
 
+      {/* bg-gradient-to-br from-indigo-100 via-sky-50 to-white */}
       {/* min-h-screen flex bg-gradient-to-br from-purple-100 via-blue-50 to-white */}
 
       {/* Sidebar */}

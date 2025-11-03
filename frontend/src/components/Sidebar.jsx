@@ -9,15 +9,17 @@ import {
   FaClock,
   FaListUl,
   FaHashtag,
-  FaRegEdit 
+  FaRegEdit,
+  FaEdit,
+  FaHourglassHalf
 } from "react-icons/fa";
 
-import { FaHourglassHalf } from "react-icons/fa";
-
-import { VscLayoutSidebarRightOff } from "react-icons/vsc";
+import { VscLayoutSidebarRightOff, VscCheckAll } from "react-icons/vsc";
 
 function Sidebar({ setActivePage }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [hover, setHover] = useState(false);
+
 
   // Today’s date parts
   const today = new Date();
@@ -29,7 +31,7 @@ function Sidebar({ setActivePage }) {
   });
 
   const navItems = [
-    { id: "new", label: "New Task", icon: <FaRegEdit  /> },
+    { id: "new", label: "New Task", icon: <FaEdit /> },
     {
       id: "today",
       label: "Today",
@@ -53,7 +55,7 @@ function Sidebar({ setActivePage }) {
 
   return (
     <aside
-      className={`${isCollapsed ? "w-16" : "w-60"
+      className={`${isCollapsed ? "w-16" : "w-75"
         } min-h-screen bg-white bg-opacity-90 shadow-lg flex flex-col justify-between transition-all duration-300`}
     >
       {/* Top Section */}
@@ -67,10 +69,17 @@ function Sidebar({ setActivePage }) {
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex items-center justify-center text-purpleMain hover:text-orangeMain transition-colors w-10 h-10 rounded-lg hover:bg-purple-50 cursor-ew-resize select-none"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            className="flex items-center justify-center text-purpleMain  transition-colors w-10 h-10 rounded-lg hover:bg-purple-50 cursor-ew-resize select-none"
           >
-            <VscLayoutSidebarRightOff size={22} />
+            {hover ? (
+              <VscLayoutSidebarRightOff size={22} />
+            ) : (
+              <VscCheckAll size={22} />
+            )}
           </button>
+
 
         </div>
 
