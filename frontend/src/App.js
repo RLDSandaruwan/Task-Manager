@@ -10,6 +10,7 @@ import Calendar from "./components/Calendar";
 import Completed from "./components/Completed";
 import Profile from "./components/Profile";
 import Labels from "./components/Labels";
+import NewTask from "./components/NewTask";
 
 export const URL = process.env.REACT_APP_SERVER_URL;
 
@@ -32,6 +33,8 @@ function App() {
         return <Profile />;
       case "labels":
         return <Labels />;
+      case "new":
+        return <NewTask />;
       default:
         return <Today />;
     }
@@ -47,7 +50,7 @@ function App() {
 
       {/* Main Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
-          {renderPage()}
+        {renderPage()}
         <ToastContainer position="top-right" autoClose={3000} />
       </main>
     </div>

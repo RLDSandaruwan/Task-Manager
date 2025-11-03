@@ -156,14 +156,14 @@ function Today() {
         Today Tasks
       </h2>
 
-      <TaskForm
+      {/* <TaskForm
         name={name}
         dueDate={dueDate}
         handleInputChange={handleInputChange}
         createTask={createTask}
         isEditing={isEditing}
         updateTask={updateTask}
-      />
+      /> */}
 
       {Tasks.length > 0 && (
         <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">

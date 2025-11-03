@@ -9,6 +9,7 @@ import {
   FaClock,
   FaListUl,
   FaHashtag,
+  FaRegEdit 
 } from "react-icons/fa";
 
 import { FaHourglassHalf } from "react-icons/fa";
@@ -28,6 +29,7 @@ function Sidebar({ setActivePage }) {
   });
 
   const navItems = [
+    { id: "new", label: "New Task", icon: <FaRegEdit  /> },
     {
       id: "today",
       label: "Today",
