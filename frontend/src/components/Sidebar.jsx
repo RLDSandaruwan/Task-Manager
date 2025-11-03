@@ -8,6 +8,8 @@ import {
   FaBars,
   FaClock,
   FaListUl,
+  FaHashtag,
+  FaRegEdit 
 } from "react-icons/fa";
 
 import { FaHourglassHalf } from "react-icons/fa";
@@ -27,6 +29,7 @@ function Sidebar({ setActivePage }) {
   });
 
   const navItems = [
+    { id: "new", label: "New Task", icon: <FaRegEdit  /> },
     {
       id: "today",
       label: "Today",
@@ -43,6 +46,7 @@ function Sidebar({ setActivePage }) {
     { id: "upcoming", label: "Upcoming", icon: <FaHourglassHalf /> },
     { id: "calendar", label: "Calandar", icon: <FaCalendarAlt /> },
     { id: "completed", label: "Completed", icon: <FaCheckCircle /> },
+    { id: "labels", label: "Labels", icon: <FaHashtag /> },
     { id: "profile", label: "Profile", icon: <FaUser /> },
   ];
 

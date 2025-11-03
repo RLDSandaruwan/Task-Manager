@@ -11,67 +11,75 @@ const TaskList = () => {
     name: "",
     dueDate: "",
     completed: false,
+    labels: [],
   });
 
-  const [Tasks, setTasks] = useState([]);
-  const [CompletedTask, setcompletedTask] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const [isEditing, setisEditing] = useState(false);
-  const [TaskID, setTaskID] = useState("");
+  const [taskID, setTaskID] = useState("");
 
   const { name, dueDate } = formData;
 
-  // handle form input change
+  // handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
 
-  // fetch tasks
+  // fetch all tasks
   const getTasks = async () => {
     setisLoading(true);
     try {
       const { data } = await axios.get(`${URL}/api/tasks`);
-      setTimeout(() => {
-        setTasks(data);
-        setisLoading(false);
-      }, 2000);
+      setTasks(data);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
+    } finally {
       setisLoading(false);
+    }
+  };
+
+  // fetch all labels
+  const getLabels = async () => {
+    try {
+      const { data } = await axios.get(`${URL}/api/labels`);
+      setLabels(data);
+    } catch (err) {
+      toast.error("Failed to load labels");
     }
   };
 
   useEffect(() => {
     getTasks();
+    getLabels();
   }, []);
 
   // create task
   const createTask = async (e) => {
     e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
+    if (name.trim() === "") return toast.error("Task name is required");
 
     // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
     const dataToSend = {
       ...formData,
-      dueDate: formData.dueDate || today,
+      dueDate: dueDate || today,
     };
 
     try {
       const res = await axios.post(`${URL}/api/tasks`, dataToSend);
       if (res.status === 201) {
         toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false });
+        setformData({ name: "", dueDate: "", completed: false, labels: [] });
         getTasks();
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
-
 
   // delete task
   const deleteTask = async (id) => {
@@ -80,59 +88,56 @@ const TaskList = () => {
       toast.success("Task deleted successfully");
       getTasks();
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
-  };
-
-  // count completed tasks
-  useEffect(() => {
-    const cTask = Tasks.filter((task) => task.completed === true);
-    setcompletedTask(cTask);
-  }, [Tasks]);
-
-  // get single task for editing
-  const getSingleTask = (task) => {
-    setformData({
-      name: task.name,
-      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "", // format date
-      completed: task.completed,
-    });
-    setTaskID(task._id);
-    setisEditing(true);
   };
 
   // update task
   const updateTask = async (e) => {
     e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
+    if (name.trim() === "") return toast.error("Task name is required");
+
     try {
-      await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false });
-      setisEditing(false);
+      await axios.put(`${URL}/api/tasks/${taskID}`, formData);
       toast.success("Task updated successfully");
+      setformData({ name: "", dueDate: "", completed: false, labels: [] });
+      setisEditing(false);
       getTasks();
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
   // mark as complete
   const setToComplete = async (task) => {
-    const newFormData = {
-      name: task.name,
-      dueDate: task.dueDate,
-      completed: true,
-    };
     try {
-      await axios.put(`${URL}/api/tasks/${task._id}`, newFormData);
+      await axios.put(`${URL}/api/tasks/${task._id}`, {
+        ...task,
+        completed: true,
+      });
       toast.success("Task marked as completed");
       getTasks();
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
+
+  // get single task for editing
+  const getSingleTask = (task) => {
+    setformData({
+      name: task.name,
+      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+      completed: task.completed,
+      labels: task.labels?.map((l) => l._id) || [],
+    });
+    setTaskID(task._id);
+    setisEditing(true);
+  };
+
+  // count completed tasks
+  useEffect(() => {
+    setCompletedTasks(tasks.filter((t) => t.completed));
+  }, [tasks]);
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
@@ -143,52 +148,55 @@ const TaskList = () => {
       <TaskForm
         name={name}
         dueDate={dueDate}
+        labels={formData.labels}
+        allLabels={labels}
         handleInputChange={handleInputChange}
         createTask={createTask}
         isEditing={isEditing}
         updateTask={updateTask}
+        setformData={setformData}
       />
 
-      {Tasks.length > 0 && (
+      {tasks.length > 0 && (
         <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">
           <p>
-            <b>Total Tasks:</b> {Tasks.length}
+            <b>Total Tasks:</b> {tasks.length}
           </p>
           <p>
-            <b>Completed Tasks:</b> {CompletedTask.length}
+            <b>Completed Tasks:</b> {completedTasks.length}
           </p>
         </div>
       )}
 
       <hr className="border-gray-300 my-4" />
 
-      {isLoading && (
+      {isLoading ? (
         <div className="flex justify-center py-6">
           <img src={loadingimg} alt="Loading" className="w-16 h-16" />
         </div>
-      )}
-
-      {!isLoading && Tasks.length === 0 ? (
+      ) : tasks.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">
           No tasks found. Please add some tasks.
         </p>
       ) : (
         <div className="space-y-3">
-          {Tasks.slice().reverse().map((task, index) => (
-            <Task
-              key={task._id || index}
-              task={task}
-              index={index}
-              deleteTask={deleteTask}
-              getSingleTask={getSingleTask}
-              setToComplete={setToComplete}
-            />
-          ))}
+          {tasks
+            .slice()
+            .reverse()
+            .map((task, index) => (
+              <Task
+                key={task._id || index}
+                task={task}
+                index={index}
+                deleteTask={deleteTask}
+                getSingleTask={getSingleTask}
+                setToComplete={setToComplete}
+              />
+            ))}
         </div>
       )}
     </div>
   );
-
 };
 
 export default TaskList;

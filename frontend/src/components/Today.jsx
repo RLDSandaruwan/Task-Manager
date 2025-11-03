@@ -13,9 +13,11 @@ function Today() {
     name: "",
     dueDate: "",
     completed: false,
+    labels: [],
   });
 
   const [Tasks, setTasks] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [CompletedTask, setcompletedTask] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const [isEditing, setisEditing] = useState(false);
@@ -55,9 +57,20 @@ function Today() {
     }
   };
 
+    // fetch all labels
+  const getLabels = async () => {
+    try {
+      const { data } = await axios.get(`${URL}/api/labels`);
+      setLabels(data);
+    } catch (err) {
+      toast.error("Failed to load labels");
+    }
+  };
+
 
   useEffect(() => {
     getTasks();
+    getLabels();
   }, []);
 
   // create task
@@ -78,7 +91,7 @@ function Today() {
       const res = await axios.post(`${URL}/api/tasks`, dataToSend);
       if (res.status === 201) {
         toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false });
+        setformData({ name: "", dueDate: "", completed: false , labels: []});
         getTasks();
       }
     } catch (err) {
@@ -123,7 +136,7 @@ function Today() {
     }
     try {
       await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false });
+      setformData({ name: "", dueDate: "", completed: false ,labels: [] });
       setisEditing(false);
       toast.success("Task updated successfully");
       getTasks();
@@ -160,9 +173,12 @@ function Today() {
         name={name}
         dueDate={dueDate}
         handleInputChange={handleInputChange}
+        labels={formData.labels}
+        allLabels={labels}
         createTask={createTask}
         isEditing={isEditing}
         updateTask={updateTask}
+        setformData={setformData}
       />
 
       {Tasks.length > 0 && (
