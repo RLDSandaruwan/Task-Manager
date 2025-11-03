@@ -29,15 +29,17 @@ const TaskList = () => {
     setformData({ ...formData, [name]: value });
   };
 
-  // fetch all tasks
+    // fetch tasks
   const getTasks = async () => {
     setisLoading(true);
     try {
       const { data } = await axios.get(`${URL}/api/tasks`);
-      setTasks(data);
+      setTimeout(() => {
+        setTasks(data);
+        setisLoading(false);
+      }, 900);
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
-    } finally {
+      toast.error(err.message);
       setisLoading(false);
     }
   };

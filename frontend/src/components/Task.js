@@ -1,4 +1,5 @@
 import { FaRegEdit, FaCheck, FaTrashAlt } from "react-icons/fa";
+import { CiCalendarDate } from "react-icons/ci";
 
 const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
   // Format due date
@@ -32,16 +33,15 @@ const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
   const labelList = Array.isArray(task.labels)
     ? task.labels
     : typeof task.labels === "string"
-    ? task.labels.split(",").map((l) => l.trim())
-    : [];
+      ? task.labels.split(",").map((l) => l.trim())
+      : [];
 
   return (
     <div
-      className={`flex justify-between items-center p-4 mb-3 border-l-4 rounded-lg shadow-sm transition-transform ${
-        task.completed
-          ? "border-green-500 bg-green-50"
-          : "border-purpleMain bg-white hover:bg-purple-50"
-      }`}
+      className={`flex justify-between items-center p-4 mb-3 border-l-4 rounded-lg shadow-sm transition-transform ${task.completed
+        ? "border-green-500 bg-green-50"
+        : "border-purpleMain bg-white hover:bg-purple-50"
+        }`}
     >
       {/* Left Section */}
       <div className="flex-1 text-gray-800 text-base">
@@ -68,22 +68,23 @@ const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
         </p>
 
         {/* Date status */}
-        <p
-          className={`text-sm mt-1 ${
-            formattedDate.includes("Today")
-              ? "text-orange-600 font-semibold"
+        <div
+          className={`flex items-center gap-1 text-sm mt-1 ${formattedDate.includes("Today")
+              ? "text-orange-600"
               : formattedDate.includes("Tomorrow")
-              ? "text-blue-600 font-semibold"
-              : formattedDate.includes("Yesterday")
-              ? "text-gray-600 italic"
-              : formattedDate.includes("Overdue")
-              ? "text-red-600 font-semibold"
-              : "text-gray-500"
-          }`}
+                ? "text-blue-600"
+                : formattedDate.includes("Yesterday")
+                  ? "text-gray-600"
+                  : formattedDate.includes("Overdue")
+                    ? "text-red-600 font-semibold"
+                    : "text-gray-500"
+            }`}
         >
-          📅 {formattedDate}
-        </p>
+          <CiCalendarDate className="text-base" />
+          <span>{formattedDate}</span>
+        </div>
       </div>
+
 
       {/* Right Section - Actions */}
       <div className="flex items-center gap-3 text-lg">
