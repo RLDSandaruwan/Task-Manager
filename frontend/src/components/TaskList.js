@@ -23,52 +23,61 @@ const TaskList = () => {
 
   const { name, dueDate } = formData;
 
+  // get logged in user
+  const user = JSON.parse(localStorage.getItem("user"));
+
   // handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
 
-    // fetch tasks
+  // fetch tasks for this user
   const getTasks = async () => {
+    if (!user?._id) return toast.error("User not logged in");
     setisLoading(true);
     try {
-      const { data } = await axios.get(`${URL}/api/tasks`);
+      const { data } = await axios.get(`${URL}/api/tasks/user/${user._id}`);
       setTimeout(() => {
         setTasks(data);
         setisLoading(false);
-      }, 900);
+      }, 800);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.msg || err.message);
       setisLoading(false);
     }
   };
 
-  // fetch all labels
-  const getLabels = async () => {
-    try {
-      const { data } = await axios.get(`${URL}/api/labels`);
-      setLabels(data);
-    } catch (err) {
-      toast.error("Failed to load labels");
-    }
-  };
+// Fetch labels for the logged-in user only
+const getLabels = async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user?._id) return toast.error("User not logged in");
+
+  try {
+    const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
+    setLabels(data);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to load labels");
+  }
+};
+
 
   useEffect(() => {
     getTasks();
     getLabels();
   }, []);
 
-  // create task
+  //  create task linked to user
   const createTask = async (e) => {
     e.preventDefault();
     if (name.trim() === "") return toast.error("Task name is required");
+    if (!user?._id) return toast.error("User not logged in");
 
-    // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
     const dataToSend = {
       ...formData,
       dueDate: dueDate || today,
+      userId: user._id, 
     };
 
     try {
@@ -79,7 +88,7 @@ const TaskList = () => {
         getTasks();
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
 
@@ -90,7 +99,7 @@ const TaskList = () => {
       toast.success("Task deleted successfully");
       getTasks();
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
 
@@ -106,7 +115,7 @@ const TaskList = () => {
       setisEditing(false);
       getTasks();
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
 
@@ -120,7 +129,7 @@ const TaskList = () => {
       toast.success("Task marked as completed");
       getTasks();
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
 

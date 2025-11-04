@@ -1,20 +1,22 @@
 const Task = require("../models/taskModel");
 const Label = require("../models/labelModel");
+const User = require("../models/userModel");
 
 // Create Task
 const createTask = async (req, res) => {
-  try {
-    const { name, completed, dueDate, labels } = req.body;
+try {
+    const { name, completed, dueDate, labels, userId } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ msg: "Task name is required" });
-    }
+    if (!name) return res.status(400).json({ msg: "Task name is required" });
+    if (!userId) return res.status(400).json({ msg: "User ID is required" });
 
-    // Optional: Validate that all provided label IDs exist
-    if (labels && labels.length > 0) {
+    const userExists = await User.findById(userId);
+    if (!userExists) return res.status(404).json({ msg: "User not found" });
+
+    if (labels?.length) {
       const existingLabels = await Label.find({ _id: { $in: labels } });
       if (existingLabels.length !== labels.length) {
-        return res.status(400).json({ msg: "One or more labels not found" });
+        return res.status(400).json({ msg: "Invalid label(s)" });
       }
     }
 
@@ -23,26 +25,31 @@ const createTask = async (req, res) => {
       completed: completed || false,
       dueDate: dueDate || new Date(),
       labels: labels || [],
+      user: userId,
     });
 
-    const populatedTask = await task.populate("labels");
-    res.status(201).json(populatedTask);
+    const populated = await task.populate("labels");
+    res.status(201).json(populated);
   } catch (error) {
     console.error("Error creating task:", error);
     res.status(500).json({ msg: error.message });
   }
 };
 
-// Get All Tasks
-const getAllTasks = async (req, res) => {
+//getUserTasks
+const getUserTasks = async (req, res) => {
   try {
-    // Populate label details when fetching tasks
-    const tasks = await Task.find().populate("labels");
+    const { userId } = req.params;
+    if (!userId) return res.status(400).json({ msg: "User ID is required" });
+
+    const tasks = await Task.find({ user: userId }).populate("labels");
     res.status(200).json(tasks);
   } catch (error) {
+    console.error("Error fetching tasks:", error);
     res.status(500).json({ msg: error.message });
   }
 };
+
 
 // Get Single Task
 const getTask = async (req, res) => {
@@ -96,7 +103,7 @@ const updateTask = async (req, res) => {
 
 module.exports = {
   createTask,
-  getAllTasks,
+  getUserTasks,
   getTask,
   deleteTask,
   updateTask,

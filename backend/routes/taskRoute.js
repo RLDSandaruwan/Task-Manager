@@ -1,6 +1,6 @@
 const express = require("express")
 const Task = require("../models/taskModel")
-const {createTask,getAllTasks,getTask,deleteTask, updateTask} = require("../controllers/taskController")
+const {createTask,getUserTasks,getTask,deleteTask, updateTask} = require("../controllers/taskController")
 const router = express.Router()
 
 
@@ -9,7 +9,7 @@ const router = express.Router()
 router.post("/",createTask);
 
 // get Data
-router.get("/",getAllTasks)
+router.get("/user/:userId",getUserTasks)
 
 //get single task
 router.get("/:id",getTask)

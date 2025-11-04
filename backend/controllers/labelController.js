@@ -2,24 +2,28 @@ const Label = require("../models/labelModel");
 
 // @desc    Create a new label
 // @route   POST /api/labels
-// @access  Public (you can make it private later if needed)
 const createLabel = async (req, res) => {
   try {
-    const { name, color } = req.body;
+    const { name, color, userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
 
     if (!name) {
       return res.status(400).json({ message: "Label name is required" });
     }
 
-    // check if label already exists
-    const existingLabel = await Label.findOne({ name });
+    // Check if user already has this label name
+    const existingLabel = await Label.findOne({ name, userId });
     if (existingLabel) {
-      return res.status(400).json({ message: "Label already exists" });
+      return res.status(400).json({ message: "Label already exists for this user" });
     }
 
     const newLabel = await Label.create({
       name,
-      color: color || "#888888", // default color if not provided
+      color: color || "#888888",
+      userId,
     });
 
     res.status(201).json(newLabel);
@@ -29,12 +33,14 @@ const createLabel = async (req, res) => {
   }
 };
 
-// @desc    Get all labels
-// @route   GET /api/labels
-// @access  Public
+// @desc    Get all labels for a user
+// @route   GET /api/labels?userId=123
 const getAllLabels = async (req, res) => {
   try {
-    const labels = await Label.find().sort({ createdAt: -1 });
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ message: "User ID required" });
+
+    const labels = await Label.find({ userId }).sort({ createdAt: -1 });
     res.status(200).json(labels);
   } catch (error) {
     console.error("Error fetching labels:", error);
@@ -43,8 +49,6 @@ const getAllLabels = async (req, res) => {
 };
 
 // @desc    Delete a label by ID
-// @route   DELETE /api/labels/:id
-// @access  Public
 const deleteLabel = async (req, res) => {
   try {
     const { id } = req.params;
@@ -62,8 +66,4 @@ const deleteLabel = async (req, res) => {
   }
 };
 
-module.exports = {
-  createLabel,
-  getAllLabels,
-  deleteLabel,
-};
+module.exports = { createLabel, getAllLabels, deleteLabel };

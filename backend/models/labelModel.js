@@ -1,22 +1,12 @@
 const mongoose = require("mongoose");
 
-const labelSchema = mongoose.Schema(
+const labelSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, "Please provide a label name"],
-      unique: true,
-      trim: true,
-    },
-    color: {
-      type: String,
-      default: "#888888", 
-    },
+    name: { type: String, required: true, trim: true },
+    color: { type: String, default: "#888888" },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Label = mongoose.model("Label", labelSchema);
-module.exports = Label;
+module.exports = mongoose.model("Label", labelSchema);
