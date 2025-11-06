@@ -25,17 +25,21 @@ function Today() {
 
   const { name, dueDate } = formData;
 
+  // get logged in user
+  const user = JSON.parse(localStorage.getItem("user"));
+
   // handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
 
-  // fetch today tasks
+  // fetch today tasks for user
   const getTasks = async () => {
+    if (!user?._id) return toast.error("User not logged in");
     setisLoading(true);
     try {
-      const { data } = await axios.get(`${URL}/api/tasks`);
+      const { data } = await axios.get(`${URL}/api/tasks/user/${user._id}`);
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -50,55 +54,56 @@ function Today() {
       setTimeout(() => {
         setTasks(todayTasks);
         setisLoading(false);
-      }, 2000);
+      }, 800);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.msg || err.message);
       setisLoading(false);
     }
   };
 
-    // fetch all labels
-  const getLabels = async () => {
-    try {
-      const { data } = await axios.get(`${URL}/api/labels`);
-      setLabels(data);
-    } catch (err) {
-      toast.error("Failed to load labels");
-    }
-  };
+  // fetch all labels for logged user
+const getLabels = async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user?._id) return toast.error("User not logged in");
 
+  try {
+    const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
+    setLabels(data);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to load labels");
+  }
+};
 
   useEffect(() => {
     getTasks();
     getLabels();
   }, []);
 
-  // create task
+  //  create task linked to user
   const createTask = async (e) => {
     e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
+    if (name.trim() === "") return toast.error("Task name is required");
+    if (!user?._id) return toast.error("User not logged in");
 
     // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
     const dataToSend = {
       ...formData,
-      dueDate: formData.dueDate || today,
+      dueDate: dueDate || today,
+      userId: user._id,
     };
 
     try {
       const res = await axios.post(`${URL}/api/tasks`, dataToSend);
       if (res.status === 201) {
         toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false , labels: []});
+        setformData({ name: "", dueDate: "", completed: false, labels: [] });
         getTasks();
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
-
 
   // delete task
   const deleteTask = async (id) => {
@@ -123,6 +128,7 @@ function Today() {
       name: task.name,
       dueDate: task.dueDate ? task.dueDate.split("T")[0] : "", // format date
       completed: task.completed,
+      labels: task.labels?.map((l) => l._id) || [],
     });
     setTaskID(task._id);
     setisEditing(true);
@@ -136,7 +142,7 @@ function Today() {
     }
     try {
       await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false ,labels: [] });
+      setformData({ name: "", dueDate: "", completed: false, labels: [] });
       setisEditing(false);
       toast.success("Task updated successfully");
       getTasks();

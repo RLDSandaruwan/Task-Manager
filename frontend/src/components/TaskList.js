@@ -48,18 +48,18 @@ const TaskList = () => {
     }
   };
 
-// Fetch labels for the logged-in user only
-const getLabels = async () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user?._id) return toast.error("User not logged in");
+  // Fetch labels for the logged-in user only
+  const getLabels = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user?._id) return toast.error("User not logged in");
 
-  try {
-    const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
-    setLabels(data);
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to load labels");
-  }
-};
+    try {
+      const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
+      setLabels(data);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to load labels");
+    }
+  };
 
 
   useEffect(() => {
@@ -73,11 +73,12 @@ const getLabels = async () => {
     if (name.trim() === "") return toast.error("Task name is required");
     if (!user?._id) return toast.error("User not logged in");
 
+    // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
     const dataToSend = {
       ...formData,
       dueDate: dueDate || today,
-      userId: user._id, 
+      userId: user._id,
     };
 
     try {
