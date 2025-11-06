@@ -75,6 +75,7 @@ const TaskList = () => {
 
     // Auto-set today's date if no due date
     const today = new Date().toISOString().split("T")[0];
+
     const dataToSend = {
       ...formData,
       dueDate: dueDate || today,

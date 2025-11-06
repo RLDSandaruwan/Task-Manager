@@ -16,18 +16,11 @@ const NewTaskForm = ({ createTask, formData, setFormData, allLabels = [] }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle label selection
+  // Handle React Select changes
   const handleLabelChange = (selectedOptions) => {
-    const selectedValues = selectedOptions
-      ? selectedOptions.map((opt) => opt.value)
-      : [];
+    const selectedValues = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];
     setFormData((prev) => ({ ...prev, labels: selectedValues }));
   };
-
-  // Pre-select existing labels
-  const selectedLabelOptions = labelOptions.filter((opt) =>
-    (labels || []).includes(opt.value)
-  );
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
@@ -63,13 +56,14 @@ const NewTaskForm = ({ createTask, formData, setFormData, allLabels = [] }) => {
           <Select
             id="labels"
             options={labelOptions}
-            value={selectedLabelOptions}
             onChange={handleLabelChange}
             isMulti
             placeholder="Select labels..."
             className="react-select-container"
             classNamePrefix="react-select"
+            value={labelOptions.filter(opt => labels.includes(opt.value))}
           />
+
         </div>
 
         {/* Due Date + Submit */}
@@ -103,4 +97,4 @@ const NewTaskForm = ({ createTask, formData, setFormData, allLabels = [] }) => {
   );
 };
 
-export default NewTaskForm ;
+export default NewTaskForm;
