@@ -10,11 +10,14 @@ const Labels = () => {
   const [loading, setLoading] = useState(false);
   const [labels, setLabels] = useState([]);
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id || user?.sub; 
+
   // ✅ Fetch all labels
   const fetchLabels = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${URL}/api/labels`);
+      const { data } = await axios.get(`${URL}/api/labels?userId=${userId}`);
       setLabels(data);
     } catch (err) {
       toast.error("Failed to load labels");
@@ -33,7 +36,7 @@ const Labels = () => {
     if (name.trim() === "") return toast.error("Label name is required");
 
     try {
-      const res = await axios.post(`${URL}/api/labels`, { name, color });
+      const res = await axios.post(`${URL}/api/labels`, { name, color, userId });
       if (res.status === 201) {
         toast.success("Label created successfully!");
         setName("");
@@ -50,7 +53,7 @@ const Labels = () => {
   const deleteLabel = async (id) => {
     // if (!window.confirm("Are you sure you want to delete this label?")) return;
     try {
-      await axios.delete(`${URL}/api/labels/${id}`);
+      await axios.delete(`${URL}/api/labels/${id}?userId=${userId}`);
       toast.success("Label deleted successfully");
       fetchLabels();
     } catch (err) {

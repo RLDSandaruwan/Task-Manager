@@ -7,13 +7,13 @@ const {
 
 const router = express.Router();
 
-// Create a label
+// Create a label (linked to a specific user)
 router.post("/", createLabel);
 
-// Get all labels
+// Get all labels for a user (based on query param ?userId=)
 router.get("/", getAllLabels);
 
-// Delete a label
+// Delete a label by ID
 router.delete("/:id", deleteLabel);
 
 module.exports = router;

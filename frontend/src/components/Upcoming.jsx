@@ -23,6 +23,9 @@ function Completed() {
 
   const { name, dueDate } = formData;
 
+    // get logged in user
+  const user = JSON.parse(localStorage.getItem("user"));
+
   // handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,9 +34,10 @@ function Completed() {
 
 // fetch Upcoming (not completed & future date) tasks
 const getUpcomingTasks = async () => {
+   if (!user?._id) return toast.error("User not logged in");
   setisLoading(true);
   try {
-    const { data } = await axios.get(`${URL}/api/tasks`);
+    const { data } = await axios.get(`${URL}/api/tasks/user/${user._id}`);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -50,7 +54,7 @@ const getUpcomingTasks = async () => {
       setisLoading(false);
     }, 2000);
   } catch (err) {
-    toast.error(err.message);
+    toast.error(err.response?.data?.msg || err.message);
     setisLoading(false);
   }
 };
@@ -60,31 +64,33 @@ const getUpcomingTasks = async () => {
     getUpcomingTasks();
   }, []);
 
-  // create task
-  const createTask = async (e) => {
-    e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
+  // // create task
 
-    // Auto-set today's date if no due date
-    const today = new Date().toISOString().split("T")[0];
-    const dataToSend = {
-      ...formData,
-      dueDate: formData.dueDate || today,
-    };
 
-    try {
-      const res = await axios.post(`${URL}/api/tasks`, dataToSend);
-      if (res.status === 201) {
-        toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false });
-        getUpcomingTasks();
-      }
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
+  // const createTask = async (e) => {
+  //   e.preventDefault();
+  //   if (name.trim() === "") {
+  //     return toast.error("Input field cannot be empty");
+  //   }
+
+  //   // Auto-set today's date if no due date
+  //   const today = new Date().toISOString().split("T")[0];
+  //   const dataToSend = {
+  //     ...formData,
+  //     dueDate: formData.dueDate || today,
+  //   };
+
+  //   try {
+  //     const res = await axios.post(`${URL}/api/tasks`, dataToSend);
+  //     if (res.status === 201) {
+  //       toast.success("Task added successfully!");
+  //       setformData({ name: "", dueDate: "", completed: false });
+  //       getUpcomingTasks();
+  //     }
+  //   } catch (err) {
+  //     toast.error(err.message);
+  //   }
+  // };
 
 
   // delete task
@@ -98,13 +104,15 @@ const getUpcomingTasks = async () => {
     }
   };
 
-  // count completed tasks
-  useEffect(() => {
-    const cTask = Tasks.filter((task) => task.completed === true);
-    setcompletedTask(cTask);
-  }, [Tasks]);
+  // // count completed tasks
+
+  // useEffect(() => {
+  //   const cTask = Tasks.filter((task) => task.completed === true);
+  //   setcompletedTask(cTask);
+  // }, [Tasks]);
 
   // get single task for editing
+
   const getSingleTask = (task) => {
     setformData({
       name: task.name,
@@ -115,22 +123,23 @@ const getUpcomingTasks = async () => {
     setisEditing(true);
   };
 
-  // update task
-  const updateTask = async (e) => {
-    e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
-    try {
-      await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false });
-      setisEditing(false);
-      toast.success("Task updated successfully");
-      getUpcomingTasks();
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
+  // // update task
+
+  // const updateTask = async (e) => {
+  //   e.preventDefault();
+  //   if (name.trim() === "") {
+  //     return toast.error("Input field cannot be empty");
+  //   }
+  //   try {
+  //     await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
+  //     setformData({ name: "", dueDate: "", completed: false });
+  //     setisEditing(false);
+  //     toast.success("Task updated successfully");
+  //     getUpcomingTasks();
+  //   } catch (err) {
+  //     toast.error(err.message);
+  //   }
+  // };
 
   // mark as complete
   const setToComplete = async (task) => {
@@ -144,7 +153,7 @@ const getUpcomingTasks = async () => {
       toast.success("Task marked as completed");
       getUpcomingTasks();
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.msg || err.message);
     }
   };
 

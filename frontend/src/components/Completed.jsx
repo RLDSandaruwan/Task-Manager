@@ -23,17 +23,21 @@ function Completed() {
 
   const { name, dueDate } = formData;
 
-  // handle form input change
+    // get logged in user
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
 
+
   // fetch Completed tasks
   const getCompletedTasks = async () => {
     setisLoading(true);
     try {
-      const { data } = await axios.get(`${URL}/api/tasks`);
+      const { data } = await axios.get(`${URL}/api/tasks/user/${user._id}`);
       // Filter only completed ones
       const completed = data.filter((task) => task.completed === true);
       setTimeout(() => {
@@ -49,32 +53,6 @@ function Completed() {
   useEffect(() => {
     getCompletedTasks();
   }, []);
-
-  // create task
-  const createTask = async (e) => {
-    e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
-
-    // Auto-set today's date if no due date
-    const today = new Date().toISOString().split("T")[0];
-    const dataToSend = {
-      ...formData,
-      dueDate: formData.dueDate || today,
-    };
-
-    try {
-      const res = await axios.post(`${URL}/api/tasks`, dataToSend);
-      if (res.status === 201) {
-        toast.success("Task added successfully!");
-        setformData({ name: "", dueDate: "", completed: false });
-        getCompletedTasks();
-      }
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
 
 
   // delete task
@@ -94,6 +72,7 @@ function Completed() {
     setcompletedTask(cTask);
   }, [Tasks]);
 
+  
   // get single task for editing
   const getSingleTask = (task) => {
     setformData({
@@ -105,22 +84,6 @@ function Completed() {
     setisEditing(true);
   };
 
-  // update task
-  const updateTask = async (e) => {
-    e.preventDefault();
-    if (name.trim() === "") {
-      return toast.error("Input field cannot be empty");
-    }
-    try {
-      await axios.put(`${URL}/api/tasks/${TaskID}`, formData);
-      setformData({ name: "", dueDate: "", completed: false });
-      setisEditing(false);
-      toast.success("Task updated successfully");
-      getCompletedTasks();
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
 
   // mark as complete
   const setToComplete = async (task) => {
@@ -137,7 +100,6 @@ function Completed() {
       toast.error(err.message);
     }
   };
-
 
 
   return (

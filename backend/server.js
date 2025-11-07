@@ -5,7 +5,7 @@ const Task = require("./models/taskModel")
 const cors = require("cors");
 const taskRoutes = require("./routes/taskRoute")
 const labelRoutes = require("./routes/labelRoute");
-
+const authRoutes = require("./routes/authRoutes");
 
 const app = express()
 
@@ -17,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/api/tasks", taskRoutes);
 app.use("/api/labels", labelRoutes);
+app.use("/api/auth", authRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import TaskList from "./components/TaskList";
-import Sidebar from "./components/Sidebar";
 
+import Sidebar from "./components/Sidebar";
+import TaskList from "./components/TaskList";
 import Today from "./components/Today";
 import Upcoming from "./components/Upcoming";
 import Calendar from "./components/Calendar";
@@ -11,11 +11,30 @@ import Completed from "./components/Completed";
 import Profile from "./components/Profile";
 import Labels from "./components/Labels";
 import NewTask from "./components/NewTask";
+import LoginPage from "./components/LoginPage";
 
 export const URL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
   const [activePage, setActivePage] = useState("all");
+  const [user, setUser] = useState(null);
+
+  // ✅ Load saved user & page
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedPage = localStorage.getItem("activePage");
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedPage) setActivePage(storedPage);
+  }, []);
+
+  // ✅ Save page whenever user changes it
+  useEffect(() => {
+    localStorage.setItem("activePage", activePage);
+  }, [activePage]);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
 
   const renderPage = () => {
     switch (activePage) {
@@ -40,16 +59,13 @@ function App() {
     }
   };
 
+  if (!user) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-indigo-100 via-sky-50 to-white text-darkBlue">
-
-      {/* bg-gradient-to-br from-indigo-100 via-sky-50 to-white */}
-      {/* min-h-screen flex bg-gradient-to-br from-purple-100 via-blue-50 to-white */}
-
-      {/* Sidebar */}
       <Sidebar setActivePage={setActivePage} />
-
-      {/* Main Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         {renderPage()}
         <ToastContainer position="top-right" autoClose={3000} />
