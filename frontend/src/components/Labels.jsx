@@ -20,7 +20,7 @@ const Labels = () => {
       const { data } = await axios.get(`${URL}/api/labels?userId=${userId}`);
       setLabels(data);
     } catch (err) {
-      toast.error("Failed to load labels");
+      toast.error(err.response?.data?.message || "Failed to load labels");
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ const Labels = () => {
       toast.success("Label deleted successfully");
       fetchLabels();
     } catch (err) {
-      toast.error("Error deleting label");
+      toast.error(err.response?.data?.message || "Error deleting label");
     }
   };
 
