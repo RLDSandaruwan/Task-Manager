@@ -15,7 +15,7 @@ function Sidebar({ setActivePage }) {
   const [hover, setHover] = useState(false);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
 
-  const popupRef = useRef(null); // ✅ ref for popup
+  const popupRef = useRef(null); // ref for popup
 
   // get logged in user
   const user = JSON.parse(localStorage.getItem("user")) || {
@@ -54,7 +54,7 @@ function Sidebar({ setActivePage }) {
     window.location.reload();
   };
 
-  // ✅ Close popup when clicking outside
+  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -85,7 +85,7 @@ function Sidebar({ setActivePage }) {
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-10">
           {!isCollapsed && (
             <h2 className="text-xl font-semibold text-purpleMain tracking-wide">
-              Task Manager
+              TaskFlow
             </h2>
           )}
           <button
@@ -109,7 +109,7 @@ function Sidebar({ setActivePage }) {
               key={item.id}
               onClick={() => {
                 setActivePage(item.id);
-                setShowProfilePopup(false); // ✅ hide popup when switching page
+                setShowProfilePopup(false); // hide popup when switching page
               }}
               className="flex items-center gap-3 text-darkBlue hover:text-purpleMain hover:bg-purple-100 px-3 py-2 rounded-lg transition-all w-full text-left"
             >

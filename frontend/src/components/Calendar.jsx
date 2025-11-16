@@ -74,7 +74,18 @@ const TaskCalendar = () => {
 
           <div className="mt-6">
             <h3 className="text-lg font-medium text-gray-700 mb-2">
-              Tasks on {selectedDate.toDateString()}
+              Tasks on{" "}
+              {(() => {
+                const today = new Date();
+                const diff =
+                  (selectedDate.setHours(0, 0, 0, 0) - today.setHours(0, 0, 0, 0)) /
+                  (1000 * 60 * 60 * 24);
+
+                if (diff === 0) return "Today";
+                if (diff === 1) return "Tomorrow";
+                if (diff === -1) return "Yesterday";
+                return selectedDate.toDateString();
+              })()}
             </h3>
 
             {tasksForDate.length > 0 ? (

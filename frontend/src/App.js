@@ -16,7 +16,7 @@ import LoginPage from "./components/LoginPage";
 export const URL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
-  const [activePage, setActivePage] = useState("all");
+  const [activePage, setActivePage] = useState("today");
   const [user, setUser] = useState(null);
 
   // ✅ Load saved user & page

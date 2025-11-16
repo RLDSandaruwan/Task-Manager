@@ -37,7 +37,7 @@ return (
           
           <div className="w-full md:w-1/2 p-4 flex flex-col justify-center">
             <h1 className="text-3xl md:text-4xl font-extrabold text-purple-700 mb-2 text-center">
-              Task Manager
+              TaskFlow
             </h1>
             <p className="text-gray-500 text-center mb-8">
               Sign in to continue managing your tasks
