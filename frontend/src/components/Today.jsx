@@ -22,6 +22,15 @@ function Today() {
   const [isLoading, setisLoading] = useState(false);
   const [isEditing, setisEditing] = useState(false);
   const [TaskID, setTaskID] = useState("");
+  const [showFormModal, setShowFormModal] = useState(false);
+
+  const openNewTaskForm = () => {
+    setformData({ name: "", dueDate: "", completed: false, labels: [] });
+    setisEditing(false);
+    setShowFormModal(true);
+  };
+
+  const closeFormModal = () => setShowFormModal(false);
 
   const { name, dueDate } = formData;
 
@@ -62,17 +71,17 @@ function Today() {
   };
 
   // fetch all labels for logged user
-const getLabels = async () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user?._id) return toast.error("User not logged in");
+  const getLabels = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user?._id) return toast.error("User not logged in");
 
-  try {
-    const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
-    setLabels(data);
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to load labels");
-  }
-};
+    try {
+      const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
+      setLabels(data);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to load labels");
+    }
+  };
 
   useEffect(() => {
     getTasks();
@@ -132,6 +141,7 @@ const getLabels = async () => {
     });
     setTaskID(task._id);
     setisEditing(true);
+    setShowFormModal(true);
   };
 
   // update task
@@ -174,18 +184,44 @@ const getLabels = async () => {
       <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
         Today Tasks
       </h2>
+      
+      {/* Task Form Modal */}
+      {showFormModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg relative">
+            {/* Close button */}
+            <button
+              onClick={closeFormModal}
+              className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ×
+            </button>
 
-      <TaskForm
-        name={name}
-        dueDate={dueDate}
-        handleInputChange={handleInputChange}
-        labels={formData.labels}
-        allLabels={labels}
-        createTask={createTask}
-        isEditing={isEditing}
-        updateTask={updateTask}
-        setformData={setformData}
-      />
+            <h3 className="text-xl font-semibold mb-4 text-purple-700">
+              {isEditing ? "Edit Task" : "Add New Task"}
+            </h3>
+
+            <TaskForm
+              name={name}
+              dueDate={dueDate}
+              labels={formData.labels}
+              allLabels={labels}
+              handleInputChange={handleInputChange}
+              createTask={(e) => {
+                createTask(e);
+                closeFormModal();
+              }}
+              isEditing={isEditing}
+              updateTask={(e) => {
+                updateTask(e);
+                closeFormModal();
+              }}
+              setformData={setformData}
+            />
+          </div>
+        </div>
+      )}
+
 
       {Tasks.length > 0 && (
         <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">

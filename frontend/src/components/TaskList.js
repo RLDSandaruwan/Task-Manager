@@ -20,6 +20,15 @@ const TaskList = () => {
   const [isLoading, setisLoading] = useState(false);
   const [isEditing, setisEditing] = useState(false);
   const [taskID, setTaskID] = useState("");
+  const [showFormModal, setShowFormModal] = useState(false);
+
+  const openNewTaskForm = () => {
+    setformData({ name: "", dueDate: "", completed: false, labels: [] });
+    setisEditing(false);
+    setShowFormModal(true);
+  };
+
+  const closeFormModal = () => setShowFormModal(false);
 
   const { name, dueDate } = formData;
 
@@ -145,7 +154,9 @@ const TaskList = () => {
     });
     setTaskID(task._id);
     setisEditing(true);
+    setShowFormModal(true);
   };
+
 
   // count completed tasks
   useEffect(() => {
@@ -158,17 +169,50 @@ const TaskList = () => {
         All Tasks
       </h2>
 
-      <TaskForm
-        name={name}
-        dueDate={dueDate}
-        labels={formData.labels}
-        allLabels={labels}
-        handleInputChange={handleInputChange}
-        createTask={createTask}
-        isEditing={isEditing}
-        updateTask={updateTask}
-        setformData={setformData}
-      />
+      {/* Floating Add Button */}
+      <button
+        onClick={openNewTaskForm}
+        className="fixed bottom-8 right-8 bg-purpleMain hover:bg-purple-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-3xl transition"
+      >
+        +
+      </button>
+
+      {/* Task Form Modal */}
+      {showFormModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg relative">
+            {/* Close button */}
+            <button
+              onClick={closeFormModal}
+              className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ×
+            </button>
+
+            <h3 className="text-xl font-semibold mb-4 text-purple-700">
+              {isEditing ? "Edit Task" : "Add New Task"}
+            </h3>
+
+            <TaskForm
+              name={name}
+              dueDate={dueDate}
+              labels={formData.labels}
+              allLabels={labels}
+              handleInputChange={handleInputChange}
+              createTask={(e) => {
+                createTask(e);
+                closeFormModal();
+              }}
+              isEditing={isEditing}
+              updateTask={(e) => {
+                updateTask(e);
+                closeFormModal();
+              }}
+              setformData={setformData}
+            />
+          </div>
+        </div>
+      )}
 
       {tasks.length > 0 && (
         <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">

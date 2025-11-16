@@ -49,14 +49,14 @@ const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
           <b className="text-purpleMain">{index + 1}.</b> {task.name}
           {/* Show labels with actual label color */}
           {labelList.map((label, i) => {
-            const labelName = label.name || label; // handle object or string
-            const labelColor = label.color || "#888888"; // fallback color
+            const labelName = label.name || label; 
+            const labelColor = label.color || "#888888"; 
             return (
               <span
                 key={i}
                 className="px-2 py-0.5 text-xs font-medium rounded-full border"
                 style={{
-                  backgroundColor: `${labelColor}20`, // 20 = light transparent background
+                  backgroundColor: `${labelColor}20`, 
                   color: labelColor,
                   borderColor: labelColor,
                 }}
