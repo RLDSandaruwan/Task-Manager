@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 // Create Task
 const createTask = async (req, res) => {
 try {
-    const { name, completed, dueDate, labels, userId } = req.body;
+  const { name, completed, dueDate, labels, userId } = req.body;
 
     if (!name) return res.status(400).json({ msg: "Task name is required" });
     if (!userId) return res.status(400).json({ msg: "User ID is required" });
@@ -22,7 +22,8 @@ try {
 
     const task = await Task.create({
       name,
-      completed: completed || false,
+      completed: !!completed,
+      completedAt: completed ? new Date() : undefined,
       dueDate: dueDate || new Date(),
       labels: labels || [],
       user: userId,
@@ -86,7 +87,18 @@ const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const task = await Task.findByIdAndUpdate(id, req.body, {
+    const update = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(update, 'completed')) {
+      if (update.completed === true) {
+        // set completedAt if marking as complete and not provided
+        if (!update.completedAt) update.completedAt = new Date();
+      } else if (update.completed === false) {
+        // clearing completion should also clear timestamp
+        update.completedAt = null;
+      }
+    }
+
+    const task = await Task.findByIdAndUpdate(id, update, {
       new: true,
       runValidators: true,
     }).populate("labels");
