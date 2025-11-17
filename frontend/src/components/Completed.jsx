@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import Task from "./Task";
+import CompletedTaskItem from "./CompletedTaskItem";
 import TaskForm from "./TaskForm";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -143,13 +143,11 @@ function Completed() {
       ) : (
         <div className="space-y-3">
           {Tasks.slice().reverse().map((task, index) => (
-            <Task
+            <CompletedTaskItem
               key={task._id || index}
               task={task}
               index={index}
               deleteTask={deleteTask}
-              getSingleTask={getSingleTask}
-              setToComplete={setToComplete}
             />
           ))}
         </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import Task from "./Task";
+import TodayTaskItem from "./TodayTaskItem";
 import TaskForm from "./TaskForm";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -249,7 +249,7 @@ function Today() {
       ) : (
         <div className="space-y-3">
           {Tasks.slice().reverse().map((task, index) => (
-            <Task
+            <TodayTaskItem
               key={task._id || index}
               task={task}
               index={index}

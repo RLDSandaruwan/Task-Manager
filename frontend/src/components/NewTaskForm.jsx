@@ -66,7 +66,7 @@ const NewTaskForm = ({ createTask, formData, setFormData, allLabels = [] }) => {
 
         </div>
 
-        {/* Due Date + Submit */}
+        {/* Due Date + Quick Picks + Submit */}
         <div className="col-span-1 flex flex-col justify-between">
           <div>
             <label
@@ -83,6 +83,57 @@ const NewTaskForm = ({ createTask, formData, setFormData, allLabels = [] }) => {
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base outline-none focus:ring-2 focus:ring-purpleMain transition"
             />
+
+            {/* Quick select chips */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() - 1);
+                  const val = d.toISOString().split("T")[0];
+                  setFormData((prev) => ({ ...prev, dueDate: val }));
+                }}
+                className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 hover:bg-red-200"
+                title="Set to yesterday (overdue)"
+              >
+                Yesterday
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  const val = d.toISOString().split("T")[0];
+                  setFormData((prev) => ({ ...prev, dueDate: val }));
+                }}
+                className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + 1);
+                  const val = d.toISOString().split("T")[0];
+                  setFormData((prev) => ({ ...prev, dueDate: val }));
+                }}
+                className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 hover:bg-green-200"
+              >
+                Tomorrow
+              </button>
+            </div>
+
+            {/* Overdue hint */}
+            {dueDate && (() => {
+              const sel = new Date(dueDate);
+              const t = new Date();
+              sel.setHours(0,0,0,0);
+              t.setHours(0,0,0,0);
+              return sel < t;
+            })() && (
+              <p className="mt-2 text-xs text-red-600">This date is in the past. The task will be marked as overdue until completed.</p>
+            )}
           </div>
 
           <button
