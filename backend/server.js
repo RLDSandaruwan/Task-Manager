@@ -12,21 +12,29 @@ const app = express()
 //Middleware
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.FRONTEND_URL // Add your Vercel URL here
+  "https://taskflow-three-sage.vercel.app",
+  process.env.FRONTEND_URL
 ].filter(Boolean);
+
+console.log("Allowed CORS origins:", allowedOrigins);
 
 app.use(cors({ 
   origin: (origin, callback) => {
+    console.log("Request from origin:", origin);
+    
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error("CORS blocked origin:", origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Add security headers for Google OAuth

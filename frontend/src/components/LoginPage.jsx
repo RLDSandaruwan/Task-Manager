@@ -9,11 +9,32 @@ function LoginPage({ onLogin }) {
     try {
       const token = credentialResponse.credential;
 
+      // Debug log
+      console.log("API URL:", SERVER_URL);
+      
+      if (!SERVER_URL) {
+        alert("ERROR: Backend API URL is not configured. Please set REACT_APP_SERVER_URL environment variable.");
+        console.error("REACT_APP_SERVER_URL is undefined");
+        return;
+      }
+
       const res = await fetch(`${SERVER_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
       });
+
+      console.log("Response status:", res.status);
+      console.log("Response headers:", res.headers.get('content-type'));
+      
+      // Check if response is actually JSON
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error("Non-JSON response:", text);
+        alert("Backend error: Server returned non-JSON response. Check console for details.");
+        return;
+      }
 
       const data = await res.json();
 
@@ -22,9 +43,11 @@ function LoginPage({ onLogin }) {
         onLogin(data.user);
       } else {
         console.error("Backend Error:", data.msg);
+        alert("Login failed: " + (data.msg || "Unknown error"));
       }
     } catch (err) {
       console.error("Error during login:", err);
+      alert("Cannot connect to backend server. Please check if the backend is running.");
     }
   };
 return (
