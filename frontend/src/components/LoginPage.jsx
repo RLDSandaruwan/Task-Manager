@@ -9,6 +9,15 @@ function LoginPage({ onLogin }) {
     try {
       const token = credentialResponse.credential;
 
+      // Debug log
+      console.log("API URL:", SERVER_URL);
+      
+      if (!SERVER_URL) {
+        alert("ERROR: Backend API URL is not configured. Please set REACT_APP_SERVER_URL environment variable.");
+        console.error("REACT_APP_SERVER_URL is undefined");
+        return;
+      }
+
       const res = await fetch(`${SERVER_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,9 +31,11 @@ function LoginPage({ onLogin }) {
         onLogin(data.user);
       } else {
         console.error("Backend Error:", data.msg);
+        alert("Login failed: " + (data.msg || "Unknown error"));
       }
     } catch (err) {
       console.error("Error during login:", err);
+      alert("Cannot connect to backend server. Please check if the backend is running.");
     }
   };
 return (
