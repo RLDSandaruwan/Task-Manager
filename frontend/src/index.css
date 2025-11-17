@@ -8,11 +8,114 @@ body {
   @apply font-poppins bg-blue-50 text-gray-800;
 }
 
-/* Optional custom scrollbar for tasks */
+/* Task container scroll */
 .task-container::-webkit-scrollbar {
   width: 6px;
 }
 .task-container::-webkit-scrollbar-thumb {
   background-color: #9d0191;
   border-radius: 4px;
+}
+
+/* Slight hover lift for task items */
+.task-card {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(157, 1, 145, 0.1);
+}
+
+
+
+/* === 1. Base Calendar Structure (.react-calendar) === */
+.react-calendar {
+    background: #ffffff;
+    border: none;
+    border-radius: 1.25rem;
+    padding: 1.75rem; /* Increased padding */
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); /* Slightly stronger shadow */
+    font-family: "Inter", system-ui, sans-serif;
+    transition: all 0.3s ease-in-out;
+    
+    /* KEY CHANGE: Increase the maximum width significantly */
+    max-width: 650px; 
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Smaller calendar tiles */
+.react-calendar__tile {
+  position: relative;
+  padding: 0.5rem 0.2rem;   /* ↓ Reduced padding */
+  margin: 0.1rem;           /* Adds spacing between tiles */
+  border-radius: 0.5rem;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  font-size: 0.9rem;        /* ↓ Smaller text */
+  color: #374151;
+  background: transparent;
+}
+
+
+/* === Weekday names (Mon, Tue...) === */
+.react-calendar__month-view__weekdays {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 1rem; /* Increased weekday font size */
+    color: #6b7280;
+    margin-bottom: 0.75rem; /* Increased margin */
+}
+
+/* === Optional: add dot below dates with tasks === */
+.react-calendar__tile.has-task::after {
+    content: "";
+    position: absolute;
+    bottom: 4px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px; /* Slightly larger dot for better visibility on a big tile */
+    height: 8px;
+    background-color: #7c3aed;
+    border-radius: 50%;
+}
+
+/* All other styles remain the same for color and effect */
+.react-calendar__tile:hover {
+  background-color: #f9fafb;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+/* === Highlight today's date (MODIFIED) === */
+.react-calendar__tile--now {
+    background-color: #ede9fe !important;
+    border-radius: 7000px;
+    
+    /* KEY CHANGE 1: Increase font weight for better boldness */
+    font-weight: 700 !important; 
+    
+    /* KEY CHANGE 2: Add a subtle ring/border for extra emphasis */
+    box-shadow: 0 0 0 2px #6d28d9; 
+    
+    color: #6d28d9 !important;
+}
+.react-calendar__tile.has-task {
+    /* (Task day styles remain the same for comparison) */
+    background-color: #f3e8ff;
+    border-radius: 9999px;
+    font-weight: 600;
+    color: #5b21b6;
+    box-shadow: 0 0 0 2px #ddd6fe;
+    transition: all 0.25s ease-in-out;
+}
+.react-calendar__tile.has-task:hover {
+  background-color: #c084fc;
+  transform: scale(1.15);
+  color: white;
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.3);
+  z-index: 2;
+}
+.react-calendar__tile:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.4);
 }
