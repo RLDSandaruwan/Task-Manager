@@ -1,0 +1,6 @@
+# Railway automatically detects Node.js projects
+# This file ensures Railway uses the correct configuration
+
+# Root directory: /
+# Build command: npm install
+# Start command: npm start (uses backend/server.js)
