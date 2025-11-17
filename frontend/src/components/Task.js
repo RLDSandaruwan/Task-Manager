@@ -70,13 +70,13 @@ const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
         {/* Date status */}
         <div
           className={`flex items-center gap-1 text-sm mt-1 ${formattedDate.includes("Today")
-              ? "text-orange-600"
+              ? "text-gray-600"
               : formattedDate.includes("Tomorrow")
                 ? "text-blue-600"
                 : formattedDate.includes("Yesterday")
-                  ? "text-gray-600"
+                  ? "text-orange-600"
                   : formattedDate.includes("Overdue")
-                    ? "text-red-600 font-semibold"
+                    ? "text-orange-800"
                     : "text-gray-500"
             }`}
         >
