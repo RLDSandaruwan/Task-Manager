@@ -24,6 +24,18 @@ function LoginPage({ onLogin }) {
         body: JSON.stringify({ token }),
       });
 
+      console.log("Response status:", res.status);
+      console.log("Response headers:", res.headers.get('content-type'));
+      
+      // Check if response is actually JSON
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error("Non-JSON response:", text);
+        alert("Backend error: Server returned non-JSON response. Check console for details.");
+        return;
+      }
+
       const data = await res.json();
 
       if (res.ok) {
