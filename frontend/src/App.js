@@ -64,10 +64,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-indigo-100 via-sky-50 to-white text-darkBlue">
-      <Sidebar setActivePage={setActivePage} />
-      <main className="flex-1 flex flex-col items-center justify-center p-6">
-        {renderPage()}
+    <div className="min-h-screen flex bg-todoist-bg text-todoist-text">
+      <Sidebar setActivePage={setActivePage} activePage={activePage} />
+      <main className="flex-1 overflow-auto">
+        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
+          {renderPage()}
+        </div>
         <ToastContainer position="top-right" autoClose={3000} />
       </main>
     </div>

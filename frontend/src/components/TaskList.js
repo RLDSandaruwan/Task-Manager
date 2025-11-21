@@ -6,6 +6,7 @@ import axios from "axios";
 import { URL } from "../App";
 import loadingimg from "../assets/loader.gif";
 import TaskListTopBar from "./TaskListTopBar";
+import { FaPlus } from "react-icons/fa";
 
 const TaskList = () => {
   const [formData, setformData] = useState({
@@ -204,18 +205,14 @@ const TaskList = () => {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
-      <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
-        All Tasks
-      </h2>
-
-      {/* Floating Add Button */}
-      <button
-        onClick={openNewTaskForm}
-        className="fixed bottom-8 right-8 bg-purpleMain hover:bg-purple-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-3xl transition"
-      >
-        +
-      </button>
+    <div className="w-full pt-16 lg:pt-0">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-todoist-text mb-1">All Tasks</h1>
+        <div className="flex items-center gap-2 text-sm text-todoist-textLight">
+          <span>{totalTasks} {totalTasks === 1 ? 'task' : 'tasks'}</span>
+        </div>
+      </div>
 
       {/* TOP BAR WITH FILTER (LEFT) AND STATS (RIGHT) */}
       <TaskListTopBar
@@ -229,52 +226,58 @@ const TaskList = () => {
 
       {/* Task Form Modal */}
       {showFormModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-start sm:items-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-lg relative my-8 sm:my-0 animate-slideUp">
+            {/* Close button */}
             <button
               onClick={closeFormModal}
-              className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-all"
             >
               ×
             </button>
 
-            <h3 className="text-xl font-semibold mb-4 text-purple-700">
-              {isEditing ? "Edit Task" : "Add New Task"}
-            </h3>
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-todoist-text">
+                {isEditing ? "Edit Task" : "Add New Task"}
+              </h3>
+            </div>
 
-            <TaskForm
-              name={name}
-              dueDate={dueDate}
-              labels={formData.labels}
-              allLabels={labels}
-              handleInputChange={handleInputChange}
-              createTask={(e) => {
-                createTask(e);
-                closeFormModal();
-              }}
-              isEditing={isEditing}
-              updateTask={(e) => {
-                updateTask(e);
-                closeFormModal();
-              }}
-              setformData={setformData}
-            />
+            {/* Modal Body */}
+            <div className="px-6 py-4">
+              <TaskForm
+                name={name}
+                dueDate={dueDate}
+                labels={formData.labels}
+                allLabels={labels}
+                handleInputChange={handleInputChange}
+                createTask={(e) => {
+                  createTask(e);
+                  closeFormModal();
+                }}
+                isEditing={isEditing}
+                updateTask={(e) => {
+                  updateTask(e);
+                  closeFormModal();
+                }}
+                setformData={setformData}
+              />
+            </div>
           </div>
         </div>
       )}
-
-      <hr className="border-gray-300 mb-4" />
 
       {isLoading ? (
         <div className="flex justify-center py-6">
           <img src={loadingimg} alt="Loading" className="w-16 h-16" />
         </div>
       ) : filteredTasks.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg">
-          No tasks found in this filter.
-        </p>
+        <div className="text-center py-12">
+          <p className="text-todoist-textLight text-sm mb-4">No tasks to show</p>
+          <p className="text-xs text-gray-400">All your tasks are organized and up to date.</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-1 mt-4">
           {filteredTasks
             .slice()
             .reverse()
@@ -290,6 +293,15 @@ const TaskList = () => {
             ))}
         </div>
       )}
+
+      {/* Add Task Button */}
+      <button
+        onClick={openNewTaskForm}
+        className="flex items-center gap-2 text-todoist-textLight hover:text-todoist-red text-sm mt-4 py-2 px-1 hover:bg-gray-50 rounded transition-colors w-full"
+      >
+        <FaPlus className="text-todoist-red text-xs" />
+        <span>Add task</span>
+      </button>
     </div>
   );
 };

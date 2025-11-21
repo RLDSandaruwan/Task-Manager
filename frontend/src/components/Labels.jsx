@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { FaTrashAlt } from "react-icons/fa";
 import { URL } from "../App";
 
 const Labels = () => {
@@ -9,9 +10,38 @@ const Labels = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [labels, setLabels] = useState([]);
+  const colorPickerRef = useRef(null);
+
+  // Curated, accessible color palette (Todoist-like, balanced hues)
+  const PALETTE = [
+    { hex: "#DC4C3E", name: "Tomato" },
+    { hex: "#E74C3C", name: "Red" },
+    { hex: "#FF6B6B", name: "Coral" },
+    { hex: "#FF9F43", name: "Orange" },
+    { hex: "#F1C40F", name: "Yellow" },
+    { hex: "#2ECC71", name: "Green" },
+    { hex: "#27AE60", name: "Emerald" },
+    { hex: "#1ABC9C", name: "Teal" },
+    { hex: "#16A085", name: "Deep Teal" },
+    { hex: "#3498DB", name: "Blue" },
+    { hex: "#2E86DE", name: "Dodger Blue" },
+    { hex: "#6C5CE7", name: "Indigo" },
+    { hex: "#8E44AD", name: "Purple" },
+    { hex: "#B33771", name: "Magenta" },
+    { hex: "#FF7675", name: "Salmon" },
+    { hex: "#E84393", name: "Pink" },
+    { hex: "#95A5A6", name: "Gray" },
+    { hex: "#7F8C8D", name: "Slate" },
+    { hex: "#34495E", name: "Steel" },
+    { hex: "#F39C12", name: "Amber" },
+    { hex: "#D35400", name: "Rust" },
+    { hex: "#00B894", name: "Mint" },
+    { hex: "#55EFC4", name: "Aqua" },
+    { hex: "#0984E3", name: "Azure" },
+  ];
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?._id || user?.sub; 
+  const userId = user?._id || user?.sub;
 
   // ✅ Fetch all labels
   const fetchLabels = async () => {
@@ -29,6 +59,23 @@ const Labels = () => {
   useEffect(() => {
     fetchLabels();
   }, []);
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target)) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showColorPicker]);
 
   // ✅ Create a new label
   const createLabel = async (e) => {
@@ -62,110 +109,114 @@ const Labels = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
-      <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
-        Manage Labels
-      </h2>
+    <div className="w-full pt-16 lg:pt-0">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-todoist-text mb-1">Labels</h1>
+        <p className="text-sm text-todoist-textLight">
+          {labels.length} {labels.length === 1 ? 'label' : 'labels'}
+        </p>
+      </div>
 
-      <form
-        onSubmit={createLabel}
-        className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-6"
-      >
-        {/* Color Picker */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setShowColorPicker(!showColorPicker)}
-            className="w-8 h-8 rounded-full border-2"
-            style={{ backgroundColor: color }}
-            title="Pick label color"
-          />
+      {/* Add Label Form */}
+      <div className="bg-white rounded-lg border border-gray-200 p-5 mb-6">
+        <h3 className="text-sm font-medium text-todoist-text mb-4">Create New Label</h3>
+        <form
+          onSubmit={createLabel}
+          className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
+        >
+          {/* Color Picker */}
+          <div className="relative" ref={colorPickerRef}>
+            <button
+              type="button"
+              onClick={() => setShowColorPicker(!showColorPicker)}
+              className="w-10 h-10 rounded-md border-2 border-gray-300 hover:border-gray-400 transition"
+              style={{ backgroundColor: color }}
+              title="Pick label color"
+            />
 
-          {showColorPicker && (
-            <div className="absolute top-10 left-0 z-10 bg-white border rounded-xl p-3 shadow-lg">
-              {/* Overlapping Color Rows */}
-              <div className="flex flex-col gap-2">
-                {/* Row 1 */}
-                <div className="flex -space-x-3">
-                  {["#4CAF50", "#F87171", "#6366F1", "#06B6D4"].map((c) => (
+            {showColorPicker && (
+              <div className="absolute top-12 left-0 z-10 bg-white border border-gray-200 rounded-lg p-3 shadow-lg w-64">
+                {/* Swatch grid */}
+                <div className="grid grid-cols-6 gap-2 mb-3">
+                  {PALETTE.map(({ hex, name }) => (
                     <button
-                      key={c}
+                      key={hex}
                       type="button"
+                      title={name}
                       onClick={() => {
-                        setColor(c);
+                        setColor(hex);
                         setShowColorPicker(false);
                       }}
-                      className={`w-6 h-6 rounded-full border-2 ${color === c ? "border-black" : "border-white"
-                        }`}
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                </div>
-
-                {/* Row 2 */}
-                <div className="flex -space-x-3">
-                  {["#F59E0B", "#EF4444", "#8B5CF6", "#14B8A6"].map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => {
-                        setColor(c);
-                        setShowColorPicker(false);
-                      }}
-                      className={`w-6 h-6 rounded-full border-2 ${color === c ? "border-black" : "border-white"
-                        }`}
-                      style={{ backgroundColor: c }}
+                      className={`relative w-7 h-7 rounded-full border transition-transform hover:scale-110 ${
+                        color.toLowerCase() === hex.toLowerCase()
+                          ? "ring-2 ring-offset-2 ring-gray-400 border-white"
+                          : "border-gray-200"
+                      }`}
+                      style={{ backgroundColor: hex }}
                     />
                   ))}
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
+          {/* Label Name */}
+          <input
+            type="text"
+            placeholder="Label name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-todoist-red focus:ring-1 focus:ring-todoist-red text-todoist-text"
+          />
 
-        {/* Label Name */}
-        <input
-          type="text"
-          placeholder="Enter label name..."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="flex-1 border-b border-gray-400 outline-none px-2 py-1"
-        />
+          {/* Add Button */}
+          <button
+            type="submit"
+            className="bg-todoist-red text-white px-5 py-2 rounded-md hover:bg-red-700 transition font-medium"
+          >
+            Add Label
+          </button>
+        </form>
+      </div>
 
-        {/* Add Button */}
-        <button
-          type="submit"
-          className="bg-purpleMain text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
-        >
-          Add Label
-        </button>
-      </form>
-
-      {/* Label List */}
-      <div className="flex flex-col gap-2 mt-4">
+      {/* Labels List */}
+      <div className="bg-white rounded-lg border border-gray-200">
         {loading ? (
-          <p className="text-center text-gray-500">Loading labels...</p>
+          <div className="p-8 text-center text-todoist-textLight">
+            Loading labels...
+          </div>
         ) : labels.length > 0 ? (
-          labels.map((label) => (
-            <div
-              key={label._id}
-              className="flex justify-between items-center border-b pb-1"
-            >
-              <span
-                className="font-medium"
-                style={{ color: label.color }}
-              >{`#${label.name}`}</span>
-              <button
-                onClick={() => deleteLabel(label._id)}
-                className="text-red-500 hover:text-red-700 text-sm"
+          <div className="divide-y divide-gray-200">
+            {labels.map((label) => (
+              <div
+                key={label._id}
+                className="group flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition"
               >
-                Delete
-              </button>
-            </div>
-          ))
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: label.color }}
+                  />
+                  <span className="text-todoist-text font-medium">
+                    {label.name}
+                  </span>
+                </div>
+                <button
+                  onClick={() => deleteLabel(label._id)}
+                  className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-todoist-red transition p-2"
+                  title="Delete label"
+                >
+                  <FaTrashAlt className="text-sm" />
+                </button>
+              </div>
+            ))}
+          </div>
         ) : (
-          <p className="text-center text-gray-400">No labels found</p>
+          <div className="p-8 text-center">
+            <p className="text-todoist-textLight mb-1">No labels yet</p>
+            <p className="text-sm text-todoist-textLight">Create your first label above</p>
+          </div>
         )}
       </div>
     </div>

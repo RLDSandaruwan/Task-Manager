@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import NewTaskForm from "../components/NewTaskForm";
+import TaskForm from "./TaskForm";
 import { URL } from "../App";
 
 const NewTask = ({ setActivePage }) => {
@@ -32,19 +32,17 @@ const NewTask = ({ setActivePage }) => {
 
     try {
       const { data } = await axios.get(`${URL}/api/labels?userId=${user._id}`);
-      console.log(data);
       setAllLabels(data);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load labels");
     }
   };
 
-
   useEffect(() => {
     getLabels();
   }, []);
 
-  // ✅ Create task and go to TaskList after success
+  // Create task and go to All Tasks after success
   const createTask = async (e) => {
     e.preventDefault();
     if (name.trim() === "") return toast.error("Task name is required");
@@ -72,12 +70,28 @@ const NewTask = ({ setActivePage }) => {
   };
 
   return (
-    <NewTaskForm
-      createTask={createTask}
-      formData={formData}
-      setFormData={setFormData}
-      allLabels={allLabels}
-    />
+    <div className="w-full pt-16 lg:pt-0">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-todoist-text mb-1">Add Task</h1>
+        <p className="text-sm text-todoist-textLight">Create a new task and organize your work</p>
+      </div>
+
+      {/* Task Form */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
+        <TaskForm
+          name={name}
+          dueDate={dueDate}
+          labels={formData.labels}
+          allLabels={allLabels}
+          handleInputChange={handleInputChange}
+          createTask={createTask}
+          isEditing={false}
+          updateTask={() => {}}
+          setformData={setFormData}
+        />
+      </div>
+    </div>
   );
 };
 
