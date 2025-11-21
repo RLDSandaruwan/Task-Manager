@@ -25,44 +25,45 @@ const TodayTaskItem = ({ task, index, deleteTask, getSingleTask, setToComplete }
   }
 
   if (task.completed) {
-    // COMPLETED TASK - Only show delete, green styling
+    // COMPLETED TASK - Todoist style
     return (
-      <div className="flex justify-between items-center p-4 mb-3 border-l-4 rounded-lg shadow-sm transition bg-green-50 border-green-500">
-        <div className="flex-1 text-gray-800 text-base">
-          <p className="flex flex-wrap items-center gap-2">
-            <b className="text-green-700">{index + 1}.</b>
-            <span className="line-through text-gray-600">{task.name}</span>
+      <div className="group flex items-start gap-3 py-2 px-1 hover:bg-gray-50 rounded transition-colors">
+        <button className="mt-1 w-5 h-5 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center flex-shrink-0">
+          <FaCheck className="text-white text-xs" />
+        </button>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-gray-400 line-through truncate">
+            {task.name}
+          </p>
+          <div className="flex items-center gap-2 mt-1">
             {labelList.map((label, i) => {
               const labelName = label.name || label;
-              const labelColor = label.color || "#6b7280";
+              const labelColor = label.color || "#808080";
               return (
                 <span
                   key={i}
-                  className="px-2 py-0.5 text-xs font-medium rounded-full border"
+                  className="text-xs px-2 py-0.5 rounded"
                   style={{
-                    backgroundColor: `${labelColor}20`,
                     color: labelColor,
-                    borderColor: labelColor,
+                    backgroundColor: `${labelColor}15`,
                   }}
                 >
                   #{labelName}
                 </span>
               );
             })}
-          </p>
-          <div className="flex items-center gap-1 text-sm mt-1 text-green-700">
-            <CiCalendarDate className="text-base" />
-            <span>Completed{completedText ? ` · ${completedText}` : ""}</span>
+            {completedText && (
+              <span className="text-xs text-gray-400">· {completedText}</span>
+            )}
           </div>
         </div>
-
-        <div className="flex items-center gap-3 text-lg">
-          <FaTrashAlt
-            className="cursor-pointer text-red-500 hover:scale-125 transition-transform"
-            onClick={() => deleteTask(task._id)}
-            title="Delete Task"
-          />
-        </div>
+        <button
+          onClick={() => deleteTask(task._id)}
+          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1"
+          title="Delete Task"
+        >
+          <FaTrashAlt className="text-sm" />
+        </button>
       </div>
     );
   }
@@ -95,63 +96,71 @@ const TodayTaskItem = ({ task, index, deleteTask, getSingleTask, setToComplete }
   }
 
   return (
-    <div className="flex justify-between items-center p-4 mb-3 border-l-4 rounded-lg shadow-sm transition border-purpleMain bg-white hover:bg-purple-50">
-      <div className="flex-1 text-gray-800 text-base">
-        <p className="flex flex-wrap items-center gap-2">
-          <b className="text-purpleMain">{index + 1}.</b> {task.name}
+    <div className="group flex items-start gap-3 py-2 px-1 hover:bg-gray-50 rounded transition-colors border-b border-gray-100 last:border-0">
+      {/* Checkbox */}
+      <button
+        onClick={() => setToComplete(task)}
+        className="mt-1 w-5 h-5 rounded-full border-2 border-gray-300 hover:border-gray-400 flex items-center justify-center flex-shrink-0 transition-colors"
+        title="Mark as Complete"
+      >
+      </button>
+
+      {/* Task Content */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm text-todoist-text mb-1">{task.name}</p>
+        
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {formattedDate !== "No date" && (
+            <span
+              className={`flex items-center gap-1 ${
+                formattedDate.includes("Today")
+                  ? "text-green-600"
+                  : formattedDate.includes("Overdue")
+                    ? "text-todoist-red font-medium"
+                    : "text-todoist-textLight"
+              }`}
+            >
+              {formattedDate}
+            </span>
+          )}
           {labelList.map((label, i) => {
             const labelName = label.name || label;
-            const labelColor = label.color || "#888888";
+            const labelColor = label.color || "#808080";
             return (
               <span
                 key={i}
-                className="px-2 py-0.5 text-xs font-medium rounded-full border"
+                className="text-xs px-2 py-0.5 rounded font-medium"
                 style={{
-                  backgroundColor: `${labelColor}20`,
                   color: labelColor,
-                  borderColor: labelColor,
+                  backgroundColor: `${labelColor}15`,
+                  borderColor: `${labelColor}40`,
+                  borderWidth: '1px',
                 }}
               >
                 #{labelName}
               </span>
             );
           })}
-        </p>
-
-        <div
-          className={`flex items-center gap-1 text-sm mt-1 ${
-            formattedDate.includes("Today")
-              ? "text-orange-600"
-              : formattedDate.includes("Tomorrow")
-                ? "text-blue-600"
-                : formattedDate.includes("Yesterday")
-                  ? "text-gray-600"
-                  : formattedDate.includes("Overdue")
-                    ? "text-red-600 font-semibold"
-                    : "text-gray-500"
-          }`}
-        >
-          <CiCalendarDate className="text-base" />
-          <span>{formattedDate}</span>
+          {/* <span className="text-gray-400">Inbox</span> */}
         </div>
       </div>
 
-      <div className="flex items-center gap-3 text-lg">
-        <FaCheck
-          className="cursor-pointer text-green-600 hover:scale-125 transition-transform"
-          onClick={() => setToComplete(task)}
-          title="Mark as Complete"
-        />
-        <FaRegEdit
-          className="cursor-pointer text-purpleMain hover:scale-125 transition-transform"
+      {/* Actions - Hidden until hover */}
+      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 transition-opacity">
+        <button
           onClick={() => getSingleTask(task)}
+          className="text-gray-400 hover:text-gray-600 p-1 transition-colors"
           title="Edit Task"
-        />
-        <FaTrashAlt
-          className="cursor-pointer text-red-500 hover:scale-125 transition-transform"
+        >
+          <FaRegEdit className="text-sm" />
+        </button>
+        <button
           onClick={() => deleteTask(task._id)}
+          className="text-gray-400 hover:text-todoist-red p-1 transition-colors"
           title="Delete Task"
-        />
+        >
+          <FaTrashAlt className="text-sm" />
+        </button>
       </div>
     </div>
   );

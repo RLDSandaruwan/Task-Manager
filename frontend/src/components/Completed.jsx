@@ -103,45 +103,28 @@ function Completed() {
 
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto w-full">
-      <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">
-        Completed Tasks
-      </h2>
-
-      {/* <TaskForm
-        name={name}
-        dueDate={dueDate}
-        handleInputChange={handleInputChange}
-        createTask={createTask}
-        isEditing={isEditing}
-        updateTask={updateTask}
-      /> */}
-
-      {Tasks.length > 0 && (
-        <div className="flex justify-between items-center mt-6 mb-4 text-gray-700">
-          <p>
-            <b>Total Completed Tasks:</b> {Tasks.length}
-          </p>
-          {/* <p>
-            <b>Completed Tasks:</b> {CompletedTask.length}
-          </p> */}
-        </div>
-      )}
-
-      <hr className="border-gray-300 my-4" />
+    <div className="w-full pt-16 lg:pt-0">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-todoist-text mb-1">Completed</h1>
+        <p className="text-sm text-todoist-textLight">
+          {Tasks.length} {Tasks.length === 1 ? 'task' : 'tasks'}
+        </p>
+      </div>
 
       {isLoading && (
-        <div className="flex justify-center py-6">
+        <div className="flex justify-center py-12">
           <img src={loadingimg} alt="Loading" className="w-16 h-16" />
         </div>
       )}
 
       {!isLoading && Tasks.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg">
-          No Completed Tasks.
-        </p>
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <p className="text-todoist-textLight mb-1">No completed tasks yet</p>
+          <p className="text-sm text-todoist-textLight">Tasks you complete will appear here</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="p-3">
           {Tasks.slice().reverse().map((task, index) => (
             <CompletedTaskItem
               key={task._id || index}
