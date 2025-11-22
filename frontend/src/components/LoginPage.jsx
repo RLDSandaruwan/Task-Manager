@@ -76,7 +76,7 @@ return (
               {/* Welcome Text */}
               <div className="text-center mb-8">
                 <h2 className="text-xl sm:text-2xl font-bold text-todoist-text mb-2">
-                  Welcome back
+                  Welcome
                 </h2>
                 <p className="text-sm sm:text-base text-todoist-textLight">
                   Sign in to organize your tasks efficiently
